@@ -1,0 +1,40 @@
+/*
+ * ENOS brand tokens — the single source of truth for color + type.
+ * Consumed by apps/web via `@import "@enos/ui/styles.css"` in globals.css.
+ * Font *families* are wired through CSS variables set by next/font in the
+ * app layout (--font-display / --font-ui / --font-body).
+ */
+@theme {
+  /* Brand palette */
+  --color-evergreen-950: #0c1f17;
+  --color-evergreen-900: #123027;
+  --color-evergreen: #183a2d; /* primary */
+  --color-evergreen-700: #23543f;
+  --color-evergreen-600: #2e6e52;
+  --color-evergreen-100: #dcebe3;
+  --color-evergreen-50: #eef6f1;
+
+  --color-lime: #d8ff32; /* accent */
+  --color-lime-300: #e5ff70;
+  --color-lime-600: #b8dd1a;
+
+  --color-teal: #30b8b2;
+  --color-teal-100: #d9f3f2;
+
+  --color-lavender: #d7d2e7;
+  --color-lavender-300: #e7e4f1;
+
+  /* Semantic aliases */
+  --color-ink: #10231b;
+  --color-surface: #fbfcf9;
+  --color-positive: #2e7d4f;
+  --color-caution: #b7791f;
+  --color-danger: #b3362c;
+
+  /* Type — families injected by next/font in the app layout */
+  --font-display: var(--font-playfair, "Playfair Display", serif);
+  --font-ui: var(--font-space-grotesk, "Space Grotesk", sans-serif);
+  --font-body: var(--font-noto-sans, "Noto Sans", sans-serif);
+
+  --radius-card: 1rem;
+}
