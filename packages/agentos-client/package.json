@@ -11,7 +11,10 @@
     "codegen": "openapi-typescript ../../docs/agent_os_openapi.yaml -o src/generated/schema.d.ts"
   },
   "devDependencies": {
-    "openapi-typescript": "^7.6.0",
+    "openapi-typescript": "^7.13.0",
     "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.17.0"
   }
 }
