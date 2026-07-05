@@ -79,6 +79,25 @@ export const runs = sqliteTable(
   (t) => [index("runs_agentId_idx").on(t.agentId)],
 );
 
+/** Waitlist signups for roadmap-gated features (Phase B–E tiles). */
+export const waitlist = sqliteTable(
+  "waitlist",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    feature: text("feature", {
+      enum: ["balance", "cards", "identity", "bank"],
+    }).notNull(),
+    email: text("email").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .default(now)
+      .notNull(),
+  },
+  (t) => [index("waitlist_user_feature_idx").on(t.userId, t.feature)],
+);
+
 /** Persisted UI messages (AI SDK UIMessage parts as JSON). */
 export const runMessages = sqliteTable(
   "run_messages",
