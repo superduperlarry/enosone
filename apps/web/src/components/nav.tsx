@@ -9,6 +9,7 @@ const workspace = [
   { href: "/approvals", label: "Approvals" },
   { href: "/activity", label: "Activity" },
   { href: "/wallet", label: "Wallet" },
+  { href: "/settings", label: "Settings" },
 ];
 
 // Roadmap gates: navigation exists, features don't (Phase B–E).
@@ -50,7 +51,7 @@ function NavLink({
   );
 }
 
-export function Nav() {
+export function Nav({ userEmail }: { userEmail?: string }) {
   return (
     <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col bg-evergreen px-4 py-6">
       <Link
@@ -78,8 +79,18 @@ export function Nav() {
         ))}
       </nav>
 
-      <div className="mt-auto px-3 font-ui text-xs text-evergreen-100/50">
-        Phase A · sandbox
+      <div className="mt-auto px-3">
+        {userEmail ? (
+          <div
+            className="mb-2 truncate font-ui text-xs text-evergreen-100/80"
+            title={userEmail}
+          >
+            {userEmail}
+          </div>
+        ) : null}
+        <div className="font-ui text-xs text-evergreen-100/50">
+          Phase A · sandbox
+        </div>
       </div>
     </aside>
   );
