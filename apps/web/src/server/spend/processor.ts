@@ -18,7 +18,9 @@ export function getStripe(): Stripe | null {
 }
 
 export function isSimulatedMode(): boolean {
-  return !process.env.STRIPE_SECRET_KEY;
+  return (
+    !process.env.STRIPE_SECRET_KEY || process.env.E2E_TEST_MODE === "1"
+  );
 }
 
 export type ChargeResult =

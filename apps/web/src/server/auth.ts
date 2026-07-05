@@ -20,6 +20,12 @@ export const auth = betterAuth({
         // Phase A dev mailer: surface the code in the server console.
         // Real mail provider lands with Phase B hosting cutover.
         console.log(`[enos-auth] ${type} code for ${email}: ${otp}`);
+        if (process.env.E2E_TEST_MODE === "1") {
+          // Playwright reads the code from disk — dev/e2e only.
+          const { mkdir, writeFile } = await import("node:fs/promises");
+          await mkdir(".e2e", { recursive: true });
+          await writeFile(".e2e/otp.txt", otp, "utf8");
+        }
       },
     }),
     passkey({
