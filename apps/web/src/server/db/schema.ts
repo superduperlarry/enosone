@@ -2,3 +2,4 @@
 // plus ENOS One app tables as milestones add them.
 export * from "./auth-schema";
 export * from "./app-schema";
+export * from "./spend-schema";

@@ -67,6 +67,12 @@ export default async function AgentPage({
         </div>
         <div className="flex gap-2">
           <Link
+            href={`/agents/${agent.id}/spend`}
+            className="rounded-full bg-lime px-4 py-1.5 font-ui text-sm font-medium text-evergreen-950 hover:bg-lime-300"
+          >
+            Pay for a service
+          </Link>
+          <Link
             href={`/agents/${agent.id}/policy`}
             className="rounded-full border border-evergreen-100 px-4 py-1.5 font-ui text-sm text-evergreen hover:bg-evergreen-50"
           >

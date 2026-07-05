@@ -1,12 +1,17 @@
 import {
   convertToModelMessages,
+  stepCountIs,
   streamText,
+  tool,
   type UIMessage,
 } from "ai";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { newId } from "@/lib/ids";
+import { money } from "@/lib/money";
+import { SPEND_CATEGORIES } from "@/lib/spend-categories";
+import { getAgentOs } from "@/server/agentos";
 import { auth } from "@/server/auth";
 import { getKeyring } from "@/server/crypto/keyring";
 import { db } from "@/server/db";
@@ -116,6 +121,64 @@ export async function POST(
     model,
     system: agent.systemPrompt || undefined,
     messages: await convertToModelMessages(messages),
+    stopWhen: stepCountIs(4),
+    tools: {
+      // Mirrors the Agent OS MCP `create_payment` tool: three outcomes the
+      // agent can reason about — completed, pending_approval (not an error),
+      // or policy_denied. All evaluation happens through the seam.
+      request_spend: tool({
+        description:
+          "Pay for a service using the owner's card on file. The request is evaluated against your spending policy: within limits it executes; above them it is held for owner approval (not an error); outside policy it is denied. Check the returned outcome.",
+        inputSchema: z.object({
+          amount: z
+            .string()
+            .regex(/^\d+(\.\d{1,2})?$/)
+            .describe('Decimal string, e.g. "25.00". Never a float.'),
+          currency: z.literal("USD"),
+          counterparty: z
+            .string()
+            .max(120)
+            .describe("Service or merchant being paid, e.g. 'Figma'"),
+          category: z.enum(SPEND_CATEGORIES),
+          purpose: z
+            .string()
+            .max(280)
+            .optional()
+            .describe("Shown to the owner on the approval card"),
+        }),
+        execute: async (input) => {
+          const result = await getAgentOs(session.user.id).createPayment({
+            agent_id: agent.id,
+            amount: money(input.amount, input.currency),
+            counterparty: input.counterparty,
+            category: input.category,
+            purpose: input.purpose,
+          });
+          if (result.outcome === "policy_denied") {
+            return {
+              outcome: "policy_denied",
+              rule: result.rule,
+              message: result.message,
+            };
+          }
+          if (result.outcome === "pending_approval") {
+            return {
+              outcome: "pending_approval",
+              approval_id: result.approval.id,
+              trigger: result.approval.trigger,
+              expires_at: result.approval.expires_at,
+              message:
+                "Held for owner approval — this is not an error. The owner decides it in the Approvals inbox.",
+            };
+          }
+          return {
+            outcome: result.payment.status,
+            payment_id: result.payment.id,
+            failure_reason: result.payment.failure_reason ?? undefined,
+          };
+        },
+      }),
+    },
   });
 
   return result.toUIMessageStreamResponse({

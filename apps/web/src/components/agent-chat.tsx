@@ -18,9 +18,20 @@ function MessageBubble({ message }: { message: UIMessage }) {
             : "border border-evergreen-100 bg-white text-ink",
         )}
       >
-        {message.parts.map((part, i) =>
-          part.type === "text" ? <span key={i}>{part.text}</span> : null,
-        )}
+        {message.parts.map((part, i) => {
+          if (part.type === "text") return <span key={i}>{part.text}</span>;
+          if (part.type.startsWith("tool-")) {
+            return (
+              <span
+                key={i}
+                className="my-1 block w-fit rounded-full border border-teal/40 bg-teal-100/50 px-3 py-1 font-ui text-xs text-evergreen-700"
+              >
+                💳 spend intent raised
+              </span>
+            );
+          }
+          return null;
+        })}
       </div>
     </div>
   );

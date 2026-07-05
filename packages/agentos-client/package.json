@@ -1,0 +1,17 @@
+{
+  "name": "@enos/agentos-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "codegen": "openapi-typescript ../../docs/agent_os_openapi.yaml -o src/generated/schema.d.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.6.0",
+    "typescript": "^5.7.0"
+  }
+}
